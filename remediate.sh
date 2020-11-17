@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-yum update -y
-service httpd start
-chkconfig httpd on
+### for test ###
+# yum update -y
+# service httpd start
+# chkconfig httpd on
 
 # 1.1.2 Ensure /tmp is configured
 
@@ -51,7 +52,7 @@ sudo chmod og-rwx /boot/grub2/grub.cfg
 
 echo "hard core 0" >> /etc/security/limits.conf
 echo "fs.suid_dumpable = 0" >> /etc/sysctl.conf
-sudo sysctl -w fs.suid_dumpable = 0
+sysctl -w fs.suid_dumpable = 0
 
 # 1.5.2 Ensure address space layout randomization (ASLR) is enabled
 
@@ -61,22 +62,22 @@ sudo sysctl -w fs.suid_dumpable = 0
 
 # 1.7.1.3 Ensure remote login warning banner is configured properly
 
-# 3.1.1 Ensure IP forwarding is disabled
+# 3.1.1 Ensure IP forwarding is disabled (fixed)
 
-echo "net.ipv4.ip_forward = 0 net.ipv6.conf.all.forwarding = 0" >> /etc/sysctl.conf
+echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.conf
 echo "net.ipv6.conf.all.forwarding = 0" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.ip_forward = 0
 sudo sysctl -w net.ipv6.conf.all.forwarding = 0
-sudo sysctl -w net.ipv6.conf.all.forwarding = 0
-sudo sysctl -w net.ipv6.conf.all.forwarding = 0
+sudo sysctl -w net.ipv4.route.flush = 1
+sudo sysctl -w net.ipv6.route.flush = 1
 
-# 3.1.2 Ensure packet redirect sending is disabled
+# 3.1.2 Ensure packet redirect sending is disabled (fixed)
 
 echo "net.ipv4.conf.all.send_redirects = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.send_redirects = 0" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.conf.all.send_redirects = 0
 sudo sysctl -w net.ipv4.conf.default.send_redirects = 0
-sudo sysctl -wnet.ipv4.route.flush = 1
+sudo sysctl -w net.ipv4.route.flush = 1
 
 # 3.2.1 Ensure source routed packets are not accepted (worked)
 
@@ -86,54 +87,55 @@ echo "net.ipv6.conf.all.accept_source_route = 0" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.accept_source_route = 0" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.conf.all.accept_source_route = 0
 sudo sysctl -w net.ipv4.conf.default.accept_source_route = 0
-sudo sysctl -wnet.ipv6.conf.all.accept_source_route = 0
+sudo sysctl -w net.ipv6.conf.all.accept_source_route = 0
 sudo sysctl -w net.ipv6.conf.default.accept_source_route = 0
 sudo sysctl -w net.ipv4.route.flush = 1
 sudo sysctl -w net.ipv6.route.flush = 1
 
-# 3.2.2 Ensure ICMP redirects are not accepted
+# 3.2.2 Ensure ICMP redirects are not accepted (fixed)
 
 echo "net.ipv4.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.accept_redirects = 0" >> /etc/sysctl.conf
-echo "net.ipv4.conf.default.accept_redirects = 0" >> /etc/sysctl.conf
-echo "net.ipv4.conf.default.accept_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv6.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv6.conf.default.accept_redirects = 0" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.conf.all.accept_redirects = 0
 sudo sysctl -w net.ipv4.conf.default.accept_redirects = 0
 sudo sysctl -w net.ipv6.conf.all.accept_redirects = 0
 sudo sysctl -w net.ipv6.conf.default.accept_redirects = 0
-sudo sysctl -wnet.ipv4.route.flush = 1
+sudo sysctl -w net.ipv4.route.flush = 1
 sudo sysctl -w net.ipv6.route.flush = 1
 
-# 3.2.3 Ensure secure ICMP redirects are not accepted
+# 3.2.3 Ensure secure ICMP redirects are not accepted (fixed)
 
 echo "net.ipv4.conf.all.secure_redirects = 0" >> /etc/sysctl.conf
-echo "net.ipv4.conf.all.secure_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.secure_redirects = 0" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.conf.all.secure_redirects = 0
 sudo sysctl -w net.ipv4.conf.default.secure_redirects = 0
-sudo sysctl -wnet.ipv4.route.flush = 1
+sudo sysctl -w net.ipv4.route.flush = 1
 
-# 3.2.4 Ensure suspicious packets are logged
+# 3.2.4 Ensure suspicious packets are logged (fixed)
 
 echo "net.ipv4.conf.all.log_martians = 1" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.log_martians = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.conf.all.log_martians = 1
 sudo sysctl -w net.ipv4.conf.default.log_martians = 1
-sudo sysctl -wnet.ipv4.route.flush = 1
+sudo sysctl -w net.ipv4.route.flush = 1
 
 # 3.2.5 Ensure broadcast ICMP requests are ignored (worked)
 
 echo "net.ipv4.icmp_echo_ignore_broadcasts = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts = 1
-sudo sysctl -wnet.ipv4.route.flush = 1
+sudo sysctl -w net.ipv4.route.flush = 1
 
 # 3.2.6 Ensure bogus ICMP responses are ignored (worked)
 echo "net.ipv4.icmp_ignore_bogus_error_responses = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses = 1
-sudo sysctl -wnet.ipv4.route.flush = 1
+sudo sysctl -w net.ipv4.route.flush = 1
 
-# 3.2.7 Ensure Reverse Path Filtering is enabled
+# 3.2.7 Ensure Reverse Path Filtering is enabled (fixed)
 
-echo "net.ipv4.conf.all.rp_filter = 1net.ipv4.conf.default.rp_filter = 1" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.rp_filter = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.conf.all.rp_filter = 1
 sudo sysctl -w net.ipv4.conf.default.rp_filter = 1
 sudo sysctl -w net.ipv4.route.flush = 1
@@ -144,13 +146,13 @@ echo "net.ipv4.tcp_syncookies = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.tcp_syncookies = 1
 sudo sysctl -w net.ipv4.route.flush = 1
 
-# 3.2.9 Ensure IPv6 router advertisements are not accepted
+# 3.2.9 Ensure IPv6 router advertisements are not accepted (fixed)
 
 echo "net.ipv6.conf.all.accept_ra = 0" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.accept_ra = 0" >> /etc/sysctl.conf
-sudo sysctl -wnet.ipv6.conf.all.accept_ra = 0
+sudo sysctl -w net.ipv6.conf.all.accept_ra = 0
 sudo sysctl -w net.ipv6.conf.default.accept_ra = 0
-sudo sysctl -wnet.ipv6.route.flush = 1
+sudo sysctl -w net.ipv6.route.flush = 1
 
 # 3.3.3 Ensure /etc/hosts.deny is configured (worked)
 
@@ -160,9 +162,9 @@ echo "ALL: ALL" >> /etc/hosts.deny
 
 echo "install dccp /bin/true" >>  /etc/modprobe.d/dccp.conf
 
-# 3.4.2 Ensure SCTP is disabled
+# 3.4.2 Ensure SCTP is disabled (fixed)
 
-echo "nstall sctp /bin/true" >>  /etc/modprobe.d/sctp.conf
+echo "install sctp /bin/true" >>  /etc/modprobe.d/sctp.conf
 
 # 3.4.3 Ensure RDS is disabled (worked)
 
