@@ -62,7 +62,7 @@ sysctl -w fs.suid_dumpable = 0
 
 # 1.7.1.3 Ensure remote login warning banner is configured properly
 
-# 3.1.1 Ensure IP forwarding is disabled (fixed)
+# 3.1.1 Ensure IP forwarding is disabled (worked)
 
 echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.conf
 echo "net.ipv6.conf.all.forwarding = 0" >> /etc/sysctl.conf
@@ -132,7 +132,7 @@ echo "net.ipv4.icmp_ignore_bogus_error_responses = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses = 1
 sudo sysctl -w net.ipv4.route.flush = 1
 
-# 3.2.7 Ensure Reverse Path Filtering is enabled (fixed)
+# 3.2.7 Ensure Reverse Path Filtering is enabled (worked)
 
 echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.rp_filter = 1" >> /etc/sysctl.conf
@@ -162,7 +162,7 @@ echo "ALL: ALL" >> /etc/hosts.deny
 
 echo "install dccp /bin/true" >>  /etc/modprobe.d/dccp.conf
 
-# 3.4.2 Ensure SCTP is disabled (fixed)
+# 3.4.2 Ensure SCTP is disabled (worked)
 
 echo "install sctp /bin/true" >>  /etc/modprobe.d/sctp.conf
 
