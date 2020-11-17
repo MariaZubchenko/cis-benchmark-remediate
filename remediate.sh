@@ -4,7 +4,6 @@ yum update -y
 service httpd start
 chkconfig httpd on
 
-# Level 1
 # 1.1.2 Ensure /tmp is configured
 
 #systemctl unmask tmp.mountsystemctl enable tmp.mount 
@@ -12,38 +11,38 @@ chkconfig httpd on
 
 # 1.1.17 Ensure noexec option set on /dev/shm partition
 
-# 1.1.1.1 Ensure mounting of cramfs filesystems is disabled
+# 1.1.1.1 Ensure mounting of cramfs filesystems is disabled (worked)
 
 echo "install cramfs /bin/true" >> /etc/modprobe.d/cramfs.conf
 sudo rmmod cramfs
 
-# 1.1.1.2 Ensure mounting of hfs filesystems is disabled
+# 1.1.1.2 Ensure mounting of hfs filesystems is disabled (worked)
 
 echo "install hfs /bin/true" >> /etc/modprobe.d/hfs.conf
 sudo rmmod hfs
 
-# 1.1.1.3 Ensure mounting of hfsplus filesystems is disabled
+# 1.1.1.3 Ensure mounting of hfsplus filesystems is disabled (worked)
 
 echo "install hfsplus /bin/true" >> /etc/modprobe.d/hfsplus.conf
 sudo rmmod hfsplus
 
-# 1.1.1.4 Ensure mounting of squashfs filesystems is disabled
+# 1.1.1.4 Ensure mounting of squashfs filesystems is disabled (worked)
 
 echo "install squashfs /bin/true" >> /etc/modprobe.d/squashfs.conf
 sudo rmmod squashfs
 
-# 1.1.1.5 Ensure mounting of udf filesystems is disabled
+# 1.1.1.5 Ensure mounting of udf filesystems is disabled (worked)
 
 echo "install udf /bin/true" >> /etc/modprobe.d/udf.conf
 sudo rmmod udf
 
-# 1.3.1 Ensure AIDE is installed
+# 1.3.1 Ensure AIDE is installed (worked)
 
 sudo yum install aide -y
 
 # 1.3.2 Ensure filesystem integrity is regularly checked
 
-# 1.4.1 Ensure permissions on bootloader config are configured
+# 1.4.1 Ensure permissions on bootloader config are configured (worked)
 
 sudo chownroot: root /boot/grub2/grub.cfg
 sudo chmod og-rwx /boot/grub2/grub.cfg
@@ -79,7 +78,7 @@ sudo sysctl -w net.ipv4.conf.all.send_redirects = 0
 sudo sysctl -w net.ipv4.conf.default.send_redirects = 0
 sudo sysctl -wnet.ipv4.route.flush = 1
 
-# 3.2.1 Ensure source routed packets are not accepted
+# 3.2.1 Ensure source routed packets are not accepted (worked)
 
 echo "net.ipv4.conf.all.accept_source_route = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.accept_source_route = 0" >> /etc/sysctl.conf
@@ -121,13 +120,13 @@ sudo sysctl -w net.ipv4.conf.all.log_martians = 1
 sudo sysctl -w net.ipv4.conf.default.log_martians = 1
 sudo sysctl -wnet.ipv4.route.flush = 1
 
-# 3.2.5 Ensure broadcast ICMP requests are ignored
+# 3.2.5 Ensure broadcast ICMP requests are ignored (worked)
 
 echo "net.ipv4.icmp_echo_ignore_broadcasts = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts = 1
 sudo sysctl -wnet.ipv4.route.flush = 1
 
-# 3.2.6 Ensure bogus ICMP responses are ignored
+# 3.2.6 Ensure bogus ICMP responses are ignored (worked)
 echo "net.ipv4.icmp_ignore_bogus_error_responses = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses = 1
 sudo sysctl -wnet.ipv4.route.flush = 1
@@ -139,7 +138,7 @@ sudo sysctl -w net.ipv4.conf.all.rp_filter = 1
 sudo sysctl -w net.ipv4.conf.default.rp_filter = 1
 sudo sysctl -w net.ipv4.route.flush = 1
 
-# 3.2.8 Ensure TCP SYN Cookies is enabled
+# 3.2.8 Ensure TCP SYN Cookies is enabled (worked)
 
 echo "net.ipv4.tcp_syncookies = 1" >> /etc/sysctl.conf
 sudo sysctl -w net.ipv4.tcp_syncookies = 1
@@ -153,11 +152,11 @@ sudo sysctl -wnet.ipv6.conf.all.accept_ra = 0
 sudo sysctl -w net.ipv6.conf.default.accept_ra = 0
 sudo sysctl -wnet.ipv6.route.flush = 1
 
-# 3.3.3 Ensure /etc/hosts.deny is configured
+# 3.3.3 Ensure /etc/hosts.deny is configured (worked)
 
 echo "ALL: ALL" >> /etc/hosts.deny
 
-# 3.4.1 Ensure DCCP is disabled
+# 3.4.1 Ensure DCCP is disabled (worked)
 
 echo "install dccp /bin/true" >>  /etc/modprobe.d/dccp.conf
 
@@ -165,11 +164,11 @@ echo "install dccp /bin/true" >>  /etc/modprobe.d/dccp.conf
 
 echo "nstall sctp /bin/true" >>  /etc/modprobe.d/sctp.conf
 
-# 3.4.3 Ensure RDS is disabled
+# 3.4.3 Ensure RDS is disabled (worked)
 
 echo "install rds /bin/true" >> /etc/modprobe.d/rds.conf
 
-# 3.4.4 Ensure TIPC is disabled
+# 3.4.4 Ensure TIPC is disabled (worked)
 
 echo "install tipc /bin/true" >> /etc/modprobe.d/tipc.conf
 
@@ -185,47 +184,47 @@ echo "install tipc /bin/true" >> /etc/modprobe.d/tipc.conf
 
 # 4.2.4 Ensure permissions on all logfiles are configured
 
-# 4.2.1.3 Ensure rsyslog default file permissions configured
+# 4.2.1.3 Ensure rsyslog default file permissions configured (worked)
 
 echo "\$FileCreateMode 0640" >> /etc/rsyslog.conf
 
 # 4.2.1.4 Ensure rsyslog is configured to send logs to a remote log host
 
-# 5.6 Ensure access to the su command is restricted
+# 5.6 Ensure access to the su command is restricted (worked)
 
 echo "auth required pam_wheel.so use_uid" >> /etc/pam.d/su
 
-# 5.1.2 Ensure permissions on /etc/crontab are configured
+# 5.1.2 Ensure permissions on /etc/crontab are configured (worked)
 
 sudo chown root:root /etc/crontab
 sudo chmod og-rwx /etc/crontab
 
-# 5.1.3 Ensure permissions on /etc/cron.hourly are configured
+# 5.1.3 Ensure permissions on /etc/cron.hourly are configured (worked)
 
 chown root:root /etc/cron.hourly 
 chmod og-rwx /etc/cron.hourly
 
-# 5.1.4 Ensure permissions on /etc/cron.daily are configured
+# 5.1.4 Ensure permissions on /etc/cron.daily are configured (worked)
 
 chown root:root /etc/cron.daily
 chmod og-rwx /etc/cron.daily
 
-# 5.1.5 Ensure permissions on /etc/cron.weekly are configured
+# 5.1.5 Ensure permissions on /etc/cron.weekly are configured (worked)
 
 chown root:root /etc/cron.weekly
 chmod og-rwx /etc/cron.weekly
 
-# Ensure permissions on /etc/cron.monthly are configured
+# 5.1.6 Ensure permissions on /etc/cron.monthly are configured (worked)
 
 chown root:root /etc/cron.monthly
 chmod og-rwx /etc/cron.monthly
 
-# 5.1.7 Ensure permissions on /etc/cron.d are configured
+# 5.1.7 Ensure permissions on /etc/cron.d are configured (worked)
 
 chown root:root /etc/cron.d
 chmod og-rwx /etc/cron.d
 
-# 5.1.8 Ensure at/cron is restricted to authorized users
+# 5.1.8 Ensure at/cron is restricted to authorized users (worked)
 
 rm /etc/cron.deny
 rm /etc/at.deny
