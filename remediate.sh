@@ -70,26 +70,13 @@ sudo yum install aide -y
 sudo chownroot: root /boot/grub2/grub.cfg
 sudo chmod og-rwx /boot/grub2/grub.cfg
 
-# 1.5.1 Ensure core dumps are restricted (fixed)
-
-###Recommendation###
-# Add the following line to /etc/security/limits.conf or a /etc/security/limits.d/* file:
-# * hard core 0 Set the following parameter in /etc/sysctl.conf or a /etc/sysctl.d/* file:
-# fs.suid_dumpable = 0 Run the following command to set the active kernel parameter: #
-# sysctl -w fs.suid_dumpable=0
-######
+# 1.5.1 Ensure core dumps are restricted (worked)
 
 echo "* hard core 0" >> /etc/security/limits.conf
 echo "fs.suid_dumpable = 0" >> /etc/sysctl.conf
 sysctl -w fs.suid_dumpable = 0
 
-# 1.5.2 Ensure address space layout randomization (ASLR) is enabled (fixed)
-
-###Recommendation###
-# Set the following parameter in /etc/sysctl.conf or a /etc/sysctl.d/* file:
-# kernel.randomize_va_space = 2 Run the following command to set the active kernel
-# parameter: # sysctl -w kernel.randomize_va_space=2
-######
+# 1.5.2 Ensure address space layout randomization (ASLR) is enabled (worked)
 
 echo "kernel.randomize_va_space = 2" >> /etc/sysctl.conf
 sysctl -w kernel.randomize_va_space = 2
@@ -396,58 +383,69 @@ chmod og-rwx /etc/at.allow
 chown root:root /etc/cron.allow
 chown root:root /etc/at.allow
 
-# 5.2.4 Ensure SSH Protocol is set to 2
+# 5.2.4 Ensure SSH Protocol is set to 2 (worked)
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows: Protocol 2
-######
+cat /etc/ssh/sshd_config | grep -v Protocol > /etc/ssh/sshd_config.new
+echo "Protocol 2" >> /etc/ssh/sshd_config.new
 
-# 5.2.5 Ensure SSH LogLevel is appropriate
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows: LogLevel VERBOSE
-# or LogLevel INFO
-######
+# 5.2.5 Ensure SSH LogLevel is appropriate (worked)
 
-# 5.2.7 Ensure SSH MaxAuthTries is set to 4 or less
+cat /etc/ssh/sshd_config | grep -v LogLevel > /etc/ssh/sshd_config.new
+echo "LogLevel VERBOSE" >> /etc/ssh/sshd_config.new
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows: MaxAuthTries 4
-######
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
-# 5.2.8 Ensure SSH IgnoreRhosts is enabled
+# 5.2.7 Ensure SSH MaxAuthTries is set to 4 or less (worked)
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows: MaxAuthTries 4
-######
+cat /etc/ssh/sshd_config | grep -v MaxAuthTries > /etc/ssh/sshd_config.new
+echo "MaxAuthTries 4" >> /etc/ssh/sshd_config.new
 
-# 5.2.9 Ensure SSH HostbasedAuthentication is disabled
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows:
-# HostbasedAuthentication no
-######
+# 5.2.8 Ensure SSH IgnoreRhosts is enabled (worked)
 
-# 5.2.10 Ensure SSH root login is disabled
+cat /etc/ssh/sshd_config | grep -v IgnoreRhosts > /etc/ssh/sshd_config.new
+echo "IgnoreRhosts yes" >> /etc/ssh/sshd_config.new
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows:
-# HostbasedAuthentication no
-######
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
-# 5.2.11 Ensure SSH PermitEmptyPasswords is disabled
+# 5.2.9 Ensure SSH HostbasedAuthentication is disabled (worked)
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows:
-# PermitEmptyPasswords no
-######
+cat /etc/ssh/sshd_config | grep -v HostbasedAuthentication > /etc/ssh/sshd_config.new
+echo "HostbasedAuthentication no" >> /etc/ssh/sshd_config.new
 
-# 5.2.12 Ensure SSH PermitUserEnvironment is disabled
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows:
-# PermitUserEnvironment no
-######
+# 5.2.10 Ensure SSH root login is disabled (worked)
+
+cat /etc/ssh/sshd_config | grep -v PermitRootLogin > /etc/ssh/sshd_config.new
+echo "PermitRootLogin no" >> /etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
+
+# 5.2.11 Ensure SSH PermitEmptyPasswords is disabled (worked)
+
+cat /etc/ssh/sshd_config | grep -v PermitEmptyPasswords > /etc/ssh/sshd_config.new
+echo "PermitEmptyPasswords no" >> /etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
+
+# 5.2.12 Ensure SSH PermitUserEnvironment is disabled (worked)
+
+cat /etc/ssh/sshd_config | grep -v PermitUserEnvironment > /etc/ssh/sshd_config.new
+echo "PermitUserEnvironment no" >> /etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
 # 5.2.13 Ensure only strong ciphers are used
 
@@ -483,11 +481,13 @@ chown root:root /etc/at.allow
 # ClientAliveInterval 300ClientAliveCountMax 0
 ######
 
-# 5.2.17 Ensure SSH LoginGraceTime is set to one minute or less
+# 5.2.17 Ensure SSH LoginGraceTime is set to one minute or less (worked)
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows: LoginGraceTime 60
-######
+cat /etc/ssh/sshd_config | grep -v LoginGraceTime  > /etc/ssh/sshd_config.new
+echo "LoginGraceTime 60">>/etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
 # 5.2.18 Ensure SSH access is limited
 
@@ -497,11 +497,13 @@ chown root:root /etc/at.allow
 # <grouplist>
 ######
 
-# 5.2.19 Ensure SSH warning banner is configured
+# 5.2.19 Ensure SSH warning banner is configured (worked)
 
-###Recommendation###
-# Edit the /etc/ssh/sshd_config file to set the parameter as follows: Banner /etc/issue.net
-######
+cat /etc/ssh/sshd_config | grep -v Banner > /etc/ssh/sshd_config.new
+echo "Banner /etc/issue.net">>/etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
 # 5.3.1 Ensure password creation requirements are configured
 
@@ -669,174 +671,128 @@ echo "umask 027" >> /etc/profile
 # boot/grub2/grub.cfg
 ######
 
-# 4.1.4 Ensure events that modify date and time information are collected
+# 4.1.4 Ensure events that modify date and time information are collected (worked)
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -
-# a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change-a
-# always,exit -F arch=b32 -S clock_settime -k time-change-w /etc/localtime -p wa -k
-# time-change For 64 bit systems add the following lines to the /etc/audit/audit.rules file:
-# -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change-a always,exit
-# -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change-a always,exit -F
-# arch=b64 -S clock_settime -k time-change-a always,exit -F arch=b32 -S clock_settime -
-# k time-change-w /etc/localtime -p wa -k time-change
-######
+echo "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b64 -S clock_settime -k time-change" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S clock_settime -k time-change" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/localtime -p wa -k time-change" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-# 4.1.5 Ensure events that modify user/group information are collected
+# 4.1.5 Ensure events that modify user/group information are collected (worked)
 
-###Recommendation###
-# Add the following lines to the /etc/audit/rules.d/audit.rules file: -w /etc/group -p wa
-# -k identity-w /etc/passwd -p wa -k identity-w /etc/gshadow -p wa -k identity-w /etc/
-# shadow -p wa -k identity-w /etc/security/opasswd -p wa -k identity
-######
+echo "-w /etc/group -p wa -k identity" >>/etc/audit/rules.d/audit.rules
+echo "-w /etc/passwd -p wa -k identity" >>/etc/audit/rules.d/audit.rules
+echo "-w /etc/gshadow -p wa -k identity" >>/etc/audit/rules.d/audit.rules
+echo "-w /etc/shadow -p wa -k identity" >>/etc/audit/rules.d/audit.rules
+echo "-w /etc/security/opasswd -p wa -k identity" >>/etc/audit/rules.d/audit.rules
+service auditd restart
 
-# 4.1.6 Ensure events that modify the system's network environment are collected
+# 4.1.6 Ensure events that modify the system's network environment are collected (worked)
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -a
-# always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale-w /etc/
-# issue -p wa -k system-locale-w /etc/issue.net -p wa -k system-locale-w /etc/hosts -p
-# wa -k system-locale-w /etc/sysconfig/network -p wa -k system-locale-w /etc/sysconf
-# ig/network-scripts/ -p wa -k system-locale For 64 bit systems add the following lines
-# to the /etc/audit/rules.d/audit.rules file: -a always,exit -F arch=b64 -S sethostname
-# -S setdomainname -k system-locale -a always,exit -F arch=b32 -S sethostname -S
-# setdomainname -k system-locale-w /etc/issue -p wa -k system-locale-w /etc/issue.net -p
-# wa -k system-locale-w /etc/hosts -p wa -k system-locale-w /etc/sysconfig/network -p wa
-# -k system-locale-w /etc/sysconfig/network-scripts/ -p wa -k system-locale
-######
+echo "-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/issue -p wa -k system-locale" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/issue.net -p wa -k system-locale" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/hosts -p wa -k system-locale" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/sysconfig/network -p wa -k system-locale" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/sysconfig/network-scripts/ -p wa -k system-locale" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-# 4.1.7 Ensure events that modify the system's Mandatory Access Controls are collected
+# 4.1.7 Ensure events that modify the system's Mandatory Access Controls are collected (worked)
 
-###Recommendation###
-# Add the following lines to the /etc/audit/rules.d/audit.rules file: -w /etc/selinux/ -p wa -k
-# MAC-policy-w /usr/share/selinux/ -p wa -k MAC-policy
-######
+echo "-w /etc/selinux/ -p wa -k MAC-policy" >> /etc/audit/rules.d/audit.rules
+echo "-w /usr/share/selinux/ -p wa -k MAC-policy" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-# 4.1.8 Ensure login and logout events are collected
+# 4.1.8 Ensure login and logout events are collected (worked)
 
-###Recommendation###
-# Add the following lines to the /etc/audit/rules.d/audit.rules file: -w /var/log/lastlog -p wa
-# -k logins-w /var/run/faillock/ -p wa -k logins
-######
+echo "-w /var/log/lastlog -p wa -k logins" >> /etc/audit/rules.d/audit.rules
+echo "-w /var/run/faillog -p wa -k logins" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-# 4.1.9 Ensure session initiation information is collected
+# 4.1.9 Ensure session initiation information is collected (worked)
 
-###Recommendation###
-# Add the following lines to the /etc/audit/rules.d/audit.rules file: -w /var/run/utmp -p wa -
-# k session-w /var/log/wtmp -p wa -k logins-w /var/log/btmp -p wa -k logins
-######
+echo "-w /var/run/utmp -p wa -k session" >> /etc/audit/rules.d/audit.rules
+echo "-w /var/log/wtmp -p wa -k logins" >> /etc/audit/rules.d/audit.rules
+echo "-w /var/log/btmp -p wa -k logins" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-# 4.1.10 Ensure discretionary access control permission modification events are collected
+# 4.1.10 Ensure discretionary access control permission modification events are collected (worked)
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file:
-# -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F
-# auid!=4294967295 -k perm_mod-a always,exit -F arch=b32 -S chown -S fchown -S
-# fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod-a always,exit
-# -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S
-# fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod For 64 bit systems
-# add the following lines to the /etc/audit/rules.d/audit.rules file: -a always,exit -F
-# arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k
-# perm_mod-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000
-# -F auid!=4294967295 -k perm_mod-a always,exit -F arch=b64 -S chown -S fchown -S
-# fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod-a always,exit
-# -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!
-# =4294967295 -k perm_mod-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S
-# fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!
-# =4294967295 -k perm_mod-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S
-# fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!
-# =4294967295 -k perm_mod
-######
+echo "-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
 
-# 4.1.11 Ensure unsuccessful unauthorized file access attempts are collected
+service auditd restart
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -a
-# always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-
-# EACCES -F auid>=1000 -F auid!=4294967295 -k access-a always,exit -F arch=b32 -
-# S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -
-# F auid!=4294967295 -k access For 64 bit systems add the following lines to the /etc/
-# audit/rules.d/audit.rules file: -a always,exit -F arch=b64 -S creat -S open -S openat -S
-# truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k accessa always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-
-# EACCES -F auid>=1000 -F auid!=4294967295 -k access-a always,exit -F arch=b64 -
-# S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F
-# auid!=4294967295 -k access-a always,exit -F arch=b32 -S creat -S open -S openat -S
-# truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access
-######
+# 4.1.11 Ensure unsuccessful unauthorized file access attempts are collected (worked)
 
-# 4.1.13 Ensure successful file system mounts are collected
+echo "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access ">> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -
-# a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts
-# For 64 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -a
-# always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts-a
-# always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts
-######
+# 4.1.13 Ensure successful file system mounts are collected (worked)
 
-# 4.1.14 Ensure file deletion events by users are collected
+echo "-a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k mounts" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -a
-# always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000
-# -F auid!=4294967295 -k delete For 64 bit systems add the following lines to the /etc/
-# audit/rules.d/audit.rules file: -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename
-# -S renameat -F auid>=1000 -F auid!=4294967295 -k delete-a always,exit -F arch=b32
-# -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k
-# delete
-######
+# 4.1.14 Ensure file deletion events by users are collected (worked)
 
-# 4.1.15 Ensure changes to system administration scope (sudoers) is collected
+echo "-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# Add the following line to the /etc/audit/rules.d/audit.rules file: -w /etc/sudoers -p wa -k
-# scope-w /etc/sudoers.d/ -p wa -k scope
-######
+# 4.1.15 Ensure changes to system administration scope (sudoers) is collected (worked)
 
-# 4.1.16 Ensure system administrator actions (sudolog) are collected
+echo "-w /etc/sudoers -p wa -k scope" >> /etc/audit/rules.d/audit.rules
+echo "-w /etc/sudoers.d/ -p wa -k scope" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# Add the following lines to the /etc/audit/rules.d/audit.rules file: -w /var/log/sudo.log -p
-# wa -k actions
-######
+# 4.1.16 Ensure system administrator actions (sudolog) are collected (worked)
 
-# 4.1.17 Ensure kernel module loading and unloading is collected
+echo "-w /var/log/sudo.log -p wa -k actions" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -w /
-# sbin/insmod -p x -k modules-w /sbin/rmmod -p x -k modules-w /sbin/modprobe -p x
-# -k modules-a always,exit -F arch=b32 -S init_module -S delete_module -k modules
-# For 64 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -w /
-# sbin/insmod -p x -k modules-w /sbin/rmmod -p x -k modules-w /sbin/modprobe -p x -k
-# modules-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
-######
+# 4.1.17 Ensure kernel module loading and unloading is collected (worked)
 
-# 4.1.18 Ensure the audit configuration is immutable
+echo "-w /sbin/insmod -p x -k modules" >> /etc/audit/rules.d/audit.rules
+echo "-w /sbin/rmmod -p x -k modules" >> /etc/audit/rules.d/audit.rules
+echo "-w /sbin/modprobe -p x -k modules" >> /etc/audit/rules.d/audit.rules
+echo "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# Add the following line to the end of the /etc/audit/rules.d/audit.rules file. -e 2
-######
+# 4.1.18 Ensure the audit configuration is immutable (worked)
 
-# 4.1.1.2 Ensure system is disabled when audit logs are full
+echo "-e 2" >> /etc/audit/rules.d/audit.rules
+service auditd restart
 
-###Recommendation###
-# Set the following parameters in /etc/audit/auditd.conf: space_left_action =
-# emailaction_mail_acct = rootadmin_space_left_action = halt
-######
+# 4.1.1.2 Ensure system is disabled when audit logs are full (worked)
 
-# 4.1.1.3 Ensure audit logs are not automatically deleted
+cat /etc/audit/auditd.conf | grep -v "space_left_action" | grep -v "action_mail_acct" | grep -v "admin_space_left_action" > /etc/audit/auditd.conf.new
 
-###Recommendation###
-# Set the following parameter in /etc/audit/auditd.conf: max_log_file_action = keep_logs
-######
+mv /etc/audit/auditd.conf.new /etc/audit/auditd.conf
+echo "space_left_action = email" >> /etc/audit/auditd.conf
+echo "action_mail_acct = root" >> /etc/audit/auditd.conf
+echo "admin_space_left_action = halt" >> /etc/audit/auditd.conf
 
-# 5.4.5 Ensure default user shell timeout is 900 seconds or less
+# 4.1.1.3 Ensure audit logs are not automatically deleted (worked)
 
-###Recommendation###
-# Edit the /etc/bashrc and /etc/profile files (and the appropriate files for any other
-# shell supported on your system) and add or edit any umask parameters as follows:
-# TMOUT=600
-######
+cat /etc/audit/auditd.conf | grep -v "max_log_file_action" > /etc/audit/auditd.conf.new
 
+mv /etc/audit/auditd.conf.new /etc/audit/auditd.conf
+echo "max_log_file_action = keep_logs" >> /etc/audit/auditd.conf
+
+# 5.4.5 Ensure default user shell timeout is 900 seconds or less (worked)
+
+echo export TMOUT=600>>/etc/bashrc
+echo export TMOUT=600>>/etc/profile
 
 
