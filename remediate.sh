@@ -58,12 +58,16 @@ sudo rmmod udf
 
 sudo yum install aide -y
 
-# 1.3.2 Ensure filesystem integrity is regularly checked
+# 1.3.2 Ensure filesystem integrity is regularly checked (fixed)
 
 ###Recommendation###
 # Run the following command: # crontab -u root -e Add the following line to the crontab:
 # 0 5 * * * /usr/sbin/aide --check
 ######
+
+crontab -u root -e 
+echo "0 5 * * * /usr/sbin/aide --check" >> /etc/crontab
+
 
 # 1.4.1 Ensure permissions on bootloader config are configured (worked)
 
@@ -303,7 +307,7 @@ ip6tables -P INPUT DROP
 ip6tables -P OUTPUT DROP
 ip6tables -P FORWARD DROP
 
-# 3.5.2.2 Ensure IPv6 loopback traffic is configured (worked)
+# 3.5.2.2 Ensure IPv6 loopback traffic is configured (fixed)
 
 ###Recommendation###
 # Run the following commands to implement the loopback rules: # ip6tables -A INPUT -
@@ -322,8 +326,8 @@ ip6tables -A INPUT -s ::1 -j DROP
 # log -type f -exec chmod g-wx,o-rwx {} +
 ######
 
-find -L /var/ log -type f -exec 
-hmod g-wx,o-rwx {} +
+find -L /var/ log -type f -exe
+chmod g-wx,o-rwx {} +
 
 # 4.2.1.3 Ensure rsyslog default file permissions configured (worked)
 
@@ -395,6 +399,18 @@ rm /etc/ssh/sshd_config.new
 
 cat /etc/ssh/sshd_config | grep -v LogLevel > /etc/ssh/sshd_config.new
 echo "LogLevel VERBOSE" >> /etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
+
+# 5.2.6 Ensure SSH X11 forwarding is disabled
+
+###Recommendation###
+# Edit the /etc/ssh/sshd_config file to set the parameter as follows: X11Forwarding no
+######
+
+cat /etc/ssh/sshd_config | grep -v X11Forwarding > /etc/ssh/sshd_config.new
+echo "X11Forwarding no" >> /etc/ssh/sshd_config.new
 
 cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
 rm /etc/ssh/sshd_config.new
@@ -474,12 +490,18 @@ rm /etc/ssh/sshd_config.new
 # a2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchangesha256
 ######
 
-# 5.2.16 Ensure SSH Idle Timeout Interval is configured
+# 5.2.16 Ensure SSH Idle Timeout Interval is configured (fixed)
 
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file to set the parameters according to site policy:
 # ClientAliveInterval 300ClientAliveCountMax 0
 ######
+
+cat /etc/ssh/sshd_config | grep -v ClientAliveInterval  > /etc/ssh/sshd_config.new
+echo "ClientAliveInterval 300ClientAliveCountMax 0" >> /etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
 
 # 5.2.17 Ensure SSH LoginGraceTime is set to one minute or less (worked)
 
@@ -489,7 +511,7 @@ echo "LoginGraceTime 60">>/etc/ssh/sshd_config.new
 cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
 rm /etc/ssh/sshd_config.new
 
-# 5.2.18 Ensure SSH access is limited
+# 5.2.18 Ensure SSH access is limited 
 
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file to set one or more of the parameter as follows:
@@ -515,7 +537,7 @@ rm /etc/ssh/sshd_config.new
 # -1ucredit = -1ocredit = -1lcredit = -1
 ######
 
-# 5.3.2 Ensure lockout for failed password attempts is configured
+# 5.3.2 Ensure lockout for failed password attempts is configured (fixed)
 
 ###Recommendation###
 # Edit the /etc/pam.d/password-auth and /etc/pam.d/system-auth files and add
@@ -532,7 +554,7 @@ echo "auth [success=1 default=bad] pam_unix.so" >> /etc/pam.d/system-auth
 echo "auth [default=die] pam_faillock.so authfail audit deny=5 unlock_time=900" >> /etc/pam.d/system-auth
 echo "auth sufficient pam_faillock.so authsucc audit deny=5 unlock_time=900" >> /etc/pam.d/system-auth
 
-# 5.3.3 Ensure password reuse is limited
+# 5.3.3 Ensure password reuse is limited (fixed)
 
 ###Recommendation###
 # Edit the /etc/pam.d/password-auth and /etc/pam.d/system-auth files to include the
@@ -540,7 +562,19 @@ echo "auth sufficient pam_faillock.so authsucc audit deny=5 unlock_time=900" >> 
 # remember=5 or password required pam_pwhistory.so remember=5
 ######
 
-# 5.4.4 Ensure default user umask is 027 or more restrictive
+cat /etc/pam.d/password-auth | grep -v pam_unix.so > /etc/pam.d/password-auth.new
+echo "pam_unix.so remember=5">>/etc/pam.d/password-auth.new
+
+cp /etc/pam.d/password-auth.new /etc/pam.d/password-auth
+rm /etc/pam.d/password-auth.new
+
+cat /etc/pam.d/system-auth | grep -v pam_pwhistory.so > /etc/pam.d/system-auth.new
+echo "pam_pwhistory.so remember=5">>/etc/pam.d/password-auth.new
+
+cp /etc/pam.d/system-auth.new /etc/pam.d/system-auth
+rm /etc/pam.d/system-auth.new
+
+# 5.4.4 Ensure default user umask is 027 or more restrictive  (fixed)
 
 ###Recommendation###
 # Edit the /etc/bashrc, /etc/profile and /etc/profile.d/*.sh files (and the appropriate files
@@ -548,10 +582,13 @@ echo "auth sufficient pam_faillock.so authsucc audit deny=5 unlock_time=900" >> 
 # follows: umask 027
 ######
 
-echo "umask 027" >> /etc/bashrc
-echo "umask 027" >> /etc/profile
+cat /etc/bashrc | grep -v umask > /etc/bashrc.new
+echo "umask 027">>/etc/bashrc.new
 
-# 5.4.1.1 Ensure password expiration is 365 days or less
+cp /etc/bashrc.new /etc/bashrc
+rm /etc/bashrc.new
+
+# 5.4.1.1 Ensure password expiration is 365 days or less (worked)
 
 ###Recommendation###
 # Set the PASS_MAX_DAYS parameter to conform to site policy in /etc/login.defs :
@@ -559,7 +596,15 @@ echo "umask 027" >> /etc/profile
 # match: # chage --maxdays 90 <user>
 ######
 
-# 5.4.1.2 Ensure minimum days between password changes is 7 or more
+cat /etc/login.defs | grep -v PASS_MAX_DAYS > /etc/login.defs.new
+echo "PASS_MAX_DAYS 90">>/etc/login.defs.new
+
+cp /etc/login.defs.new /etc/login.defs
+rm /etc/login.defs.new
+
+chage --maxdays 90 <user>
+
+# 5.4.1.2 Ensure minimum days between password changes is 7 or more (fixed)
 
 ###Recommendation###
 # Set the PASS_MIN_DAYS parameter to 7 in /etc/login.defs : PASS_MIN_DAYS 7
@@ -567,13 +612,24 @@ echo "umask 027" >> /etc/profile
 # <user>
 ######
 
-# 5.4.1.4 Ensure inactive password lock is 30 days or less
+cat /etc/login.defs | grep -v PASS_MIN_DAYS > /etc/login.defs.new
+echo "PASS_MIN_DAYS 7" >> /etc/login.defs.new
+
+cp /etc/login.defs.new /etc/login.defs
+rm /etc/login.defs.new
+
+chage --mindays 7 <user>
+
+# 5.4.1.4 Ensure inactive password lock is 30 days or less (fixed)
 
 ###Recommendation###
 # Run the following command to set the default password inactivity period to 30 days: #
 # useradd -D -f 30 Modify user parameters for all users with a password set to match: #
 # chage --inactive 30 <user>
 ######
+
+useradd -D -f 30 
+chage --inactive 30 <user>
 
 # 1.1.6 Ensure separate partition exists for /var
 
@@ -642,27 +698,39 @@ echo "umask 027" >> /etc/profile
 # following command to remount /dev/shm : # mount -o remount,noexec /dev/shm
 ######
 
-# 1.6.1.2 Ensure the SELinux state is enforcing
+# 1.6.1.2 Ensure the SELinux state is enforcing (fixed)
  
 ###Recommendation###
 # Edit the /etc/selinux/config file to set the SELINUX parameter: SELINUX=enforcing
 ######
 
-# 1.6.1.3 Ensure SELinux policy is configured
+cat /etc/selinux/config | grep -v SELINUX > /etc/selinux/config.new
+echo "SELINUX = enforcing">>/etc/selinux/config.new
+
+cp /etc/selinux/config.new /etc/selinux/config
+rm /etc/selinux/config.new
+
+# 1.6.1.3 Ensure SELinux policy is configured (fixed)
 
 ###Recommendation###
 # Edit the /etc/selinux/config file to set the SELINUXTYPE parameter:
 # SELINUXTYPE=targeted
 ######
 
-# 1.6.1.6 Ensure no unconfined daemons exist
+cat /etc/selinux/config | grep -v SELINUXTYPE > /etc/selinux/config.new
+echo "SELINUXTYPE = targeted">>/etc/selinux/config.new
+
+cp /etc/selinux/config.new /etc/selinux/config
+rm /etc/selinux/config.new
+
+# 1.6.1.6 Ensure no unconfined daemons exist (fixed)
 
 ###Recommendation###
 # Investigate any unconfined daemons found during the audit action. They may need to
 # have an existing security context assigned to them or a policy built for them.
 ######
 
-# 3.6 Disable IPv6
+# 3.6 Disable IPv6 (fixed)
 
 ###Recommendation###
 # Edit /etc/default/grub and remove add ipv6.disable=1 to the
@@ -670,6 +738,9 @@ echo "umask 027" >> /etc/profile
 # Run the following command to update the grub2 configuration: # grub2-mkconfig -o /
 # boot/grub2/grub.cfg
 ######
+
+GRUB_CMDLINE_LINUX="ipv6.disable=1"
+grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # 4.1.4 Ensure events that modify date and time information are collected (worked)
 
@@ -706,7 +777,12 @@ echo "-w /etc/selinux/ -p wa -k MAC-policy" >> /etc/audit/rules.d/audit.rules
 echo "-w /usr/share/selinux/ -p wa -k MAC-policy" >> /etc/audit/rules.d/audit.rules
 service auditd restart
 
-# 4.1.8 Ensure login and logout events are collected (worked)
+# 4.1.8 Ensure login and logout events are collected (fixed)
+
+###Recommendation###
+# Add the following lines to the /etc/audit/rules.d/audit.rules file: 
+# -w /var/log/lastlog -p wa -k logins-w /var/run/faillock/ -p wa -k logins
+######
 
 echo "-w /var/log/lastlog -p wa -k logins" >> /etc/audit/rules.d/audit.rules
 echo "-w /var/run/faillog -p wa -k logins" >> /etc/audit/rules.d/audit.rules
@@ -719,7 +795,24 @@ echo "-w /var/log/wtmp -p wa -k logins" >> /etc/audit/rules.d/audit.rules
 echo "-w /var/log/btmp -p wa -k logins" >> /etc/audit/rules.d/audit.rules
 service auditd restart
 
-# 4.1.10 Ensure discretionary access control permission modification events are collected (worked)
+# 4.1.10 Ensure discretionary access control permission modification events are collected (fixed)
+
+###Recommendation###
+# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file:
+# -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k 
+# perm_mod-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!
+# =4294967295 -k perm_mod-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S 
+# removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod For 64 
+# bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -a always,exit -F 
+# arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod-a always,exit 
+# -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod-a always,
+# exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k 
+# perm_mod-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F 
+# auid! =4294967295 -k perm_mod-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr 
+# -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid! =4294967295 -k perm_mod-a 
+# always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S 
+# fremovexattr -F auid>=1000 -F auid! =4294967295 -k perm_mod
+######
 
 echo "-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
 echo "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod" >> /etc/audit/rules.d/audit.rules
@@ -730,7 +823,22 @@ echo "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S remove
 
 service auditd restart
 
-# 4.1.11 Ensure unsuccessful unauthorized file access attempts are collected (worked)
+# 4.1.11 Ensure unsuccessful unauthorized file access attempts are collected (fixed)
+
+###Recommendation###
+# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: 
+# -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=- EACCES 
+# -F auid>=1000 -F auid!=4294967295 -k access-a always,exit -F arch=b32 -
+# S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -
+# F auid!=4294967295 -k access For 64 bit systems add the following lines to the /etc/ 
+# audit/rules.d/audit.rules file: -a always,exit -F arch=b64 -S creat -S open -S openat -S 
+# truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access- a always,exit 
+# -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=- EACCES -F auid>=1000 
+# -F auid!=4294967295 -k access-a always,exit -F arch=b64 -
+# S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 
+# -k access-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F 
+# exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access
+######
 
 echo "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access" >> /etc/audit/rules.d/audit.rules
 echo "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access" >> /etc/audit/rules.d/audit.rules
@@ -738,13 +846,30 @@ echo "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftrun
 echo "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access" >> /etc/audit/rules.d/audit.rules
 service auditd restart
 
-# 4.1.13 Ensure successful file system mounts are collected (worked)
+# 4.1.13 Ensure successful file system mounts are collected (fixed)
+
+###Recommendation###
+# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: -
+# a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts For 64 bit 
+# systems add the following lines to the /etc/audit/rules.d/audit.rules file: -a always,exit 
+# -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts-a always,exit -F arch=b32 
+# -S mount -F auid>=1000 -F auid!=4294967295 -k mounts
+######
 
 echo "-a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts" >> /etc/audit/rules.d/audit.rules
 echo "-a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k mounts" >> /etc/audit/rules.d/audit.rules
 service auditd restart
 
-# 4.1.14 Ensure file deletion events by users are collected (worked)
+# 4.1.14 Ensure file deletion events by users are collected (fixed)
+
+###Recommendation###
+# For 32 bit systems add the following lines to the /etc/audit/rules.d/audit.rules file: 
+# -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000
+# -F auid!=4294967295 -k delete For 64 bit systems add the following lines to the /etc/ 
+# audit/rules.d/audit.rules file: -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename 
+# -S renameat -F auid>=1000 -F auid!=4294967295 -k delete-a always,exit -F arch=b32 -S unlink 
+# -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete
+######
 
 echo "-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete" >> /etc/audit/rules.d/audit.rules
 echo "-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete" >> /etc/audit/rules.d/audit.rules
@@ -790,7 +915,13 @@ cat /etc/audit/auditd.conf | grep -v "max_log_file_action" > /etc/audit/auditd.c
 mv /etc/audit/auditd.conf.new /etc/audit/auditd.conf
 echo "max_log_file_action = keep_logs" >> /etc/audit/auditd.conf
 
-# 5.4.5 Ensure default user shell timeout is 900 seconds or less (worked)
+# 5.4.5 Ensure default user shell timeout is 900 seconds or less (fixed)
+
+###Recommendation###
+# Edit the /etc/bashrc and /etc/profile files (and the appropriate files 
+# for any other shell supported on your system) and add or edit any umask parameters 
+# as follows: TMOUT=600
+######
 
 echo export TMOUT=600>>/etc/bashrc
 echo export TMOUT=600>>/etc/profile
