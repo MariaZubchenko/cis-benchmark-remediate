@@ -2,6 +2,15 @@
 
 # 1.1.2 Ensure /tmp is configured
 
+###Description###
+# Description The /tmp directory is a world-writable directory used for temporary storage
+#  by all users and some applications. Rationale Making /tmp its own file system allows
+# an administrator to set the noexec option on the mount, making /tmp useless for an attacker 
+# to install executable code. It would also prevent an attacker from establishing a hardlink to a system 
+# setuid program and wait for it to be updated. Once the program was updated, the hardlink 
+# would be broken and the attacker would have his own copy of the program. If the program happened to 
+# have a security vulnerability, the attacker could continue to exploit the known flaw. This can be 
+# accomplished by either mounting tmpfs to /tmp, or creating a separate partition for /tmp.
 ###Recommendation###
 # Configure /etc/fstab as appropriate. example:tmpfs /tmp tmpfs defaults,rw,nosuid,nodev
 # ,noexec,relatime 0 0 or Run the following commands to enable systemd /tmp mounting:
@@ -10,7 +19,8 @@
 # local-fs.target.wants/tmp.mount to configure the /tmp mount: [Mount]What=tmpfsWhe
 # re=/tmpType=tmpfsOptions=mode=1777,strictatime,noexec,nodev,nosuid Impact:
 # Since the /tmp directory is intended to be world-writable, there is a risk of resource
-# exhaustion if it is not bound to a separate partition.Running out of /tmp space is a problem regardless of what kind of filesystem lies under it, but in a default installation
+# exhaustion if it is not bound to a separate partition.Running out of /tmp space is a problem
+# regardless of what kind of filesystem lies under it, but in a default installation
 # a disk-based /tmp will essentially have the whole disk available, as it only creates a
 # single / partition. On the other hand, a RAM-based /tmp as with tmpfs will almost
 # certainly be much smaller, which can lead to applications filling up the filesystem much
@@ -23,6 +33,11 @@
 
 # 1.1.17 Ensure noexec option set on /dev/shm partition
 
+
+###Description###
+# The noexec mount option specifies that the filesystem cannot contain executable binaries. 
+# Rationale Setting this option on a file system prevents users from executing programs from 
+# shared memory. This deters users from introducing potentially malicious software on the system.
 ###Recommendation###
 # Edit the /etc/fstab file and add noexec to the fourth field (mounting options) for
 # the /dev/shm partition. See the fstab(5) manual page for more information. Run the
@@ -60,6 +75,10 @@ sudo yum install aide -y
 
 # 1.3.2 Ensure filesystem integrity is regularly checked (fixed)
 
+###Description###
+# Periodic checking of the filesystem integrity is needed to detect changes to the filesystem.
+# Rationale Periodic file checking allows the system administrator to determine on a regular basis 
+# if critical files have been changed in an unauthorized fashion.
 ###Recommendation###
 # Run the following command: # crontab -u root -e Add the following line to the crontab:
 # 0 5 * * * /usr/sbin/aide --check
@@ -67,7 +86,6 @@ sudo yum install aide -y
 
 crontab -u root -e 
 echo "0 5 * * * /usr/sbin/aide --check" >> /etc/crontab
-
 
 # 1.4.1 Ensure permissions on bootloader config are configured (worked)
 
@@ -87,6 +105,18 @@ sysctl -w kernel.randomize_va_space = 2
 
 # 1.7.1.1 Ensure message of the day is configured properly
 
+###Description### 
+# The contents of the /etc/motd file are displayed to users after login and function as a message 
+# of the day for authenticated users. Unix-based systems have typically displayed information about 
+# the OS release and patch level upon logging in to the system. This information can be useful to 
+# developers who are developing software for a particular OS platform. If mingetty(8) supports the 
+# following options, they display operating system information: \m - machine architecture \r - operating 
+# system release \s - operating system name \v - operating system version Rationale Warning messages 
+# inform users who are attempting to login to the system of their legal status regarding
+# the system and must include the name of the organization that owns the system and any monitoring
+# policies that are in place. Displaying OS and patch level information in login banners also has the 
+# side effect of providing detailed system information to attackers attempting to target specific 
+# exploits of a system. Authorized users can easily get
 ###Recommendation###
 # Edit the /etc/motd file with the appropriate contents according to your site policy,
 # remove any instances of \m , \r , \s ,\v. , or references to the OS platform
@@ -94,6 +124,19 @@ sysctl -w kernel.randomize_va_space = 2
 
 # 1.7.1.2 Ensure local login warning banner is configured properly (fixed)
 
+###Description###
+# The contents of the /etc/issue file are displayed to users prior to login for local terminals. 
+# Unix-based systems have typically displayed information about the OS release and patch level upon 
+# logging in to the system. This information can be useful to developers who are developing 
+# software for a particular OS platform. If mingetty(8) supports the following options, 
+# they display operating system information: \m - machine architecture \r - operating system 
+# release \s - operating system name \v - operating system version Rationale Warning messages 
+# inform users who are attempting to login to the system of their legal status regarding the system 
+# and must include the name of the organization that owns the system and any monitoring 
+# policies that are in place. Displaying OS and patch level information in login banners also 
+# has the side effect of providing detailed system information to attackers attempting to target 
+# specific exploits of a system. Authorized users can easily get this information by running the 
+# " uname -a " command once they have logged in.
 ###Recommendation###
 # Edit the /etc/issue file with the appropriate contents according to your site policy,
 # remove any instances of \m , \r , \s , \v or references to the OS platform: # echo
@@ -104,6 +147,18 @@ echo "Authorized uses only. All activity may be monitored and reported." > /etc/
 
 # 1.7.1.3 Ensure remote login warning banner is configured properly (fixed)
 
+###Description### 
+# The contents of the /etc/issue.net file are displayed to users prior to login for 
+# remote connections from configured services. Unix-based systems have typically displayed 
+# information about the OS release and patch level upon logging in to the system. This information 
+# can be useful to developers who are developing software for a particular OS platform. If mingetty(8) 
+# supports the following options, they display operating system information: \m - machine architecture 
+# \r - operating system release \s - operating system name \v - operating system version Rationale 
+# Warning messages inform users who are attempting to login to the system of their legal status regarding
+# the system and must include the name of the organization that owns the system and any monitoring policies 
+# that are in place. Displaying OS and patch level information in login banners also has the side effect of 
+# providing detailed system information to attackers attempting to target specific exploits of a system. 
+# Authorized users can easily get this information by running the " uname -a " command once they have logged in.
 ###Recommendation###
 # Edit the /etc/issue.net file with the appropriate contents according to your site policy,
 # remove any instances of \m , \r , \s , or \v , or references to the OS platform: # echo
@@ -123,6 +178,12 @@ sudo sysctl -w net.ipv6.route.flush = 1
 
 # 3.1.2 Ensure packet redirect sending is disabled (fixed)
 
+
+###Description###
+# ICMP Redirects are used to send routing information to other hosts. As a host itself does not act as 
+# a router (in a host only configuration), there is no need to send redirects. Rationale An attacker 
+# could use a compromised host to send invalid ICMP redirects to other router devices in an attempt to 
+# corrupt routing and have users access a system set up by the attacker as opposed to a valid system.
 ###Recommendation###
 # Set the following parameters in /etc/sysctl.conf or a /etc/sysctl.d/* file: net.ipv4
 # .conf.all.send_redirects = 0net.ipv4.conf.default.send_redirects = 0 Run the
@@ -152,6 +213,14 @@ sudo sysctl -w net.ipv6.route.flush = 1
 
 # 3.2.2 Ensure ICMP redirects are not accepted (fixed)
 
+###Description###
+# ICMP redirect messages are packets that convey routing information and tell your host 
+# (acting as a router) to send packets via an alternate path. It is a way of allowing an outside 
+# routing device to update your system routing tables. By setting net. ipv4.conf.all.accept_redirects 
+# and net.ipv6.conf.all.accept_redirects to 0, the system will not accept any ICMP redirect messages, 
+# and therefore, won't allow outsiders to update the system's routing tables. Rationale Attackers could 
+# use bogus ICMP redirect messages to maliciously alter the system routing tables and get them to send 
+# packets to incorrect networks and allow your system packets to be captured.
 ###Recommendation###
 # Set the following parameters in /etc/sysctl.conf or a /etc/sysctl.d/* file: net.ipv4.con
 # f.all.accept_redirects = 0net.ipv4.conf.default.accept_redirects = 0net.ipv6.conf.a
@@ -175,10 +244,17 @@ sudo sysctl -w net.ipv6.route.flush = 1
 
 # 3.2.3 Ensure secure ICMP redirects are not accepted (fixed)
 
+###Description### 
+# Secure ICMP redirects are the same as ICMP redirects, except they come from gateways listed 
+# on the default gateway list. It is assumed that these gateways are known to your system, and that 
+# they are likely to be secure. Rationale It is still possible for even known gateways to be compromised. 
+# Setting net.ipv4.conf.all.secure_redirec ts to 0 protects the system from routing table updates 
+# by possibly compromised known gateways.
 ###Recommendation###
 # Set the following parameters in /etc/sysctl.conf or a /etc/sysctl.d/* file: net.ipv4
 # .conf.all.secure_redirects = 0net.ipv4.conf.default.secure_redirects = 0 Run the
-# following commands to set the active kernel parameters: # sysctl -w net.ipv4.conf.all.secure_redirects=0# sysctl -w net.ipv4.conf.default.secure_redirects=0# sysctl -w
+# following commands to set the active kernel parameters: # sysctl -w net.ipv4.conf.all.secure_redirects=0# 
+# sysctl -w net.ipv4.conf.default.secure_redirects=0# sysctl -w
 # net.ipv4.route.flush=1
 ######
 
@@ -190,6 +266,10 @@ sudo sysctl -w net.ipv4.route.flush = 1
 
 # 3.2.4 Ensure suspicious packets are logged (fixed)
 
+###Description###
+# Description When enabled, this feature logs packets with un-routable source addresses to the 
+# kernel log. Rationale Enabling this feature and logging these packets allows an administrator 
+# to investigate the possibility that an attacker is sending spoofed packets to their system.
 ###Recommendation###
 # Set the following parameters in /etc/sysctl.conf or a /etc/sysctl.d/* file:
 # net.ipv4.conf.all.log_martians = 1net.ipv4.conf.default.log_martians = 1 Run the
@@ -231,6 +311,11 @@ sudo sysctl -w net.ipv4.route.flush = 1
 
 # 3.2.9 Ensure IPv6 router advertisements are not accepted (fixed)
 
+###Description###
+# This setting disables the system's ability to accept IPv6 router advertisements. 
+# Rationale It is recommended that systems not accept router advertisements as they could be tricked 
+# into routing traffic to compromised machines. Setting hard routes within the system (usually a single 
+# default route to a trusted router) protects the system from bad routes.
 ###Recommendation###
 # Set the following parameters in /etc/sysctl.conf or a /etc/sysctl.d/* file:
 # net.ipv6.conf.all.accept_ra = 0net.ipv6.conf.default.accept_ra = 0 Run
@@ -267,6 +352,11 @@ echo "install tipc /bin/true" >> /etc/modprobe.d/tipc.conf
 
 # 3.5.1.1 Ensure default deny firewall policy (fixed)
 
+###Description###
+# A default deny all policy on connections ensures that any unconfigured network usage 
+# will be rejected. Rationale With a default accept policy the firewall will accept any 
+# packet that is not configured to be denied. It is easier to white list acceptable usage 
+# than to black list unacceptable usage.
 ###Recommendation###
 # Run the following commands to implement a default DROP policy: # iptables -P
 # INPUT DROP# iptables -P OUTPUT DROP# iptables -P FORWARD DROP
@@ -278,6 +368,12 @@ iptables -P FORWARD DROP
 
 # 3.5.1.2 Ensure loopback traffic is configured (fixed)
 
+###Description ###
+# Configure the loopback interface to accept traffic. Configure all other interfaces to deny traffic 
+# to the loopback network (127.0.0.0/8). Rationale Loopback traffic is generated between processes 
+# on machine and is typically critical to operation of the system. The loopback interface is the 
+# only place that loopback network (127.0.0.0/8) traffic should be seen, all other interfaces should 
+# ignore traffic on this network as an anti-spoofing measure.
 ###Recommendation###
 # Run the following commands to implement the loopback rules: # iptables -A INPUT
 # -i lo -j ACCEPT# iptables -A OUTPUT -o lo -j ACCEPT# iptables -A INPUT -s
@@ -290,6 +386,10 @@ iptables -A INPUT -s 127.0.0.0/8 -j DROP
 
 # 3.5.1.4 Ensure firewall rules exist for all open ports
 
+###Description###
+# Any ports that have been opened on non-loopback addresses need firewall rules to govern traffic. 
+# Rationale Without a firewall rule configured for open ports default firewall policy will 
+# drop all packets to these ports.
 ###Recommendation###
 # For each port identified in the audit which does not have a firewall rule establish a
 # proper rule for accepting inbound connections: 
@@ -298,6 +398,10 @@ iptables -A INPUT -s 127.0.0.0/8 -j DROP
 
 # 3.5.2.1 Ensure IPv6 default deny firewall policy (fixed)
 
+###Description###
+# A default deny all policy on connections ensures that any unconfigured network usage will be rejected. 
+# Rationale With a default accept policy the firewall will accept any packet that is not configured to be denied. 
+# It is easier to white list acceptable usage than to black list unacceptable usage.
 ###Recommendation###
 # Run the following commands to implement a default DROP policy: # ip6tables -P
 # INPUT DROP# ip6tables -P OUTPUT DROP# ip6tables -P FORWARD DROP
@@ -309,6 +413,12 @@ ip6tables -P FORWARD DROP
 
 # 3.5.2.2 Ensure IPv6 loopback traffic is configured (fixed)
 
+###Description###
+# Configure the loopback interface to accept traffic. Configure all other interfaces to deny traffic 
+# to the loopback network (::1). Rationale Loopback traffic is generated between processes on machine 
+# and is typically critical to operation of the system. The loopback interface is the only place that 
+# loopback network (::1) traffic should be seen, all other interfaces should ignore traffic on this 
+# network as an anti- spoofing measure.
 ###Recommendation###
 # Run the following commands to implement the loopback rules: # ip6tables -A INPUT -
 # i lo -j ACCEPT# ip6tables -A OUTPUT -o lo -j ACCEPT# ip6tables -A INPUT -s ::1 -j
@@ -321,13 +431,16 @@ ip6tables -A INPUT -s ::1 -j DROP
 
 # 4.2.4 Ensure permissions on all logfiles are configured (fixed)
 
+###Description###
+# Log files stored in /var/log/ contain logged information from many services on the system, 
+# or on log hosts others as well. Rationale It is important to ensure that log files have 
+# the correct permissions to ensure that sensitive data is archived and protected.
 ###Recommendation###
 # Run the following command to set permissions on all existing log files: # find -L /var/
 # log -type f -exec chmod g-wx,o-rwx {} +
 ######
 
-find -L /var/ log -type f -exe
-chmod g-wx,o-rwx {} +
+find -L /var/log -type f -exe chmod g-wx,o-rwx {} +
 
 # 4.2.1.3 Ensure rsyslog default file permissions configured (worked)
 
@@ -335,6 +448,11 @@ echo "\$FileCreateMode 0640" >> /etc/rsyslog.conf
 
 # 4.2.1.4 Ensure rsyslog is configured to send logs to a remote log host
 
+###Description###
+# The rsyslog utility supports the ability to send logs it gathers to a remote log host running syslogd(8) 
+# or to receive messages from remote hosts, reducing administrative overhead. Rationale Storing log data 
+# on a remote host protects log integrity from local attacks. If an attacker gains root access on the 
+# local system, they could tamper with or remove log data that is stored on the local system
 ###Recommendation###
 # Edit the /etc/rsyslog.conf and /etc/rsyslog.d/*.conf files and add the following
 # line (where loghost.example.com is the name of your central log host). *.*
@@ -465,6 +583,24 @@ rm /etc/ssh/sshd_config.new
 
 # 5.2.13 Ensure only strong ciphers are used
 
+###Description###
+# Description This variable limits the ciphers that SSH can use during communication. 
+# Rationale Weak ciphers that are used for authentication to the cryptographic module cannot be relied upon to provide 
+# confidentiality or integrity, and system data may
+# be compromised The DES, Triple DES, and Blowfish ciphers, as used in SSH, have
+# a birthday bound of approximately four billion blocks, which makes it easier for
+# remote attackers to obtain cleartext data via a birthday attack against a long-duration encrypted session, aka a 
+# "Sweet32" attack The RC4 algorithm, as used in the TLS protocol and SSL protocol, does not properly combine state data 
+# with key data during the initialization phase, which makes it easier for remote attackers to conduct plaintext- recovery 
+# attacks against the initial bytes of a stream by sniffing network traffic that occasionally relies on keys affected by 
+# the Invariance Weakness, and then using a brute- force approach involving LSB values, aka the "Bar Mitzvah" issue 
+# The passwords used during an SSH session encrypted with RC4 can be recovered by an attacker who is able to capture and replay 
+# the session Error handling in the SSH protocol; Client and Server, when using a block cipher algorithm in Cipher 
+# Block Chaining (CBC) mode, makes it easier for remote attackers to recover certain plaintext data from an arbitrary block
+# of ciphertext in an SSH session via unknown vectors The mm_newkeys_from_blob function in monitor_wrap.c, when an 
+# AES-GCM cipher is used, does not properly initialize memory for a MAC context data structure, which allows remote 
+# authenticated users to bypass intended ForceCommand and login-shell restrictions via packet data that provides a 
+# crafted callback address
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file add/modify the Ciphers line to contain a comma
 # separated list of the site approved ciphers Example: Ciphers chacha20-poly1305@op
@@ -474,6 +610,12 @@ rm /etc/ssh/sshd_config.new
 
 # 5.2.14 Ensure only strong MAC algorithms are used
 
+###Description### 
+# This variable limits the types of MAC algorithms that SSH can use during communication. 
+# Rationale MD5 and 96-bit MAC algorithms are considered weak and have been shown to increase exploitability 
+# in SSH downgrade attacks. Weak algorithms continue to have a great deal of attention as a weak spot that can be 
+# exploited with expanded computing power. An attacker that breaks the algorithm could take advantage 
+# of a MiTM position to decrypt the SSH tunnel and capture credentials and information
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file and add/modify the MACs line to contain a comma
 # separated list of the site approved MACs Example: MACs hmac-sha2-512-etm@openss
@@ -482,6 +624,13 @@ rm /etc/ssh/sshd_config.new
 
 # 5.2.15 Ensure that strong Key Exchange algorithms are used
 
+###Description### 
+# Key exchange is any method in cryptography by which cryptographic keys are exchanged between two 
+# parties, allowing use of a cryptographic algorithm. If the sender and receiver wish to exchange 
+# encrypted messages, each must be equipped to encrypt messages to be sent and decrypt messages 
+# received Rationale Key exchange methods that are considered weak should be removed. 
+# A key exchange method may be weak because too few bits are used, or the hashing algorithm is considered too weak. 
+# Using weak algorithms could expose connections to man-in-the-middle attacks
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file add/modify the KexAlgorithms line to contain
 # a comma separated list of the site approved key exchange algorithms Example:
@@ -492,13 +641,31 @@ rm /etc/ssh/sshd_config.new
 
 # 5.2.16 Ensure SSH Idle Timeout Interval is configured (fixed)
 
+###Description###
+# The two options ClientAliveInterval and ClientAliveCountMax control
+# the timeout of ssh sessions. When the ClientAliveInterval variable is set, ssh sessions that have no 
+# activity for the specified length of time are terminated. When the ClientAliveCountMax variable is set, 
+# sshd will send client alive messages at every ClientAliveInterval interval. When the number of consecutive 
+# client alive messages are sent with no response from the client, the ssh session is terminated. For example, 
+# if the ClientAliveInterval is set to 15 seconds and the ClientAliveCountMax is set to 3, the client ssh session 
+# will be terminated after 45 seconds of idle time. Rationale Having no timeout value associated with a connection could 
+# allow an unauthorized user access to another user's ssh session (e.g. user walks away from their computer and doesn't 
+# lock the screen). Setting a timeout value at least reduces the risk of this happening.. While the recommended setting 
+# is 300 seconds (5 minutes), set this timeout value based on site policy. The recommended setting for ClientAliveCountMax is 0. 
+# In this case, the client session will be terminated after 5 minutes of idle time and no keepalive messages will be sent.
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file to set the parameters according to site policy:
-# ClientAliveInterval 300ClientAliveCountMax 0
+# ClientAliveInterval 300 ClientAliveCountMax 0
 ######
 
 cat /etc/ssh/sshd_config | grep -v ClientAliveInterval  > /etc/ssh/sshd_config.new
-echo "ClientAliveInterval 300ClientAliveCountMax 0" >> /etc/ssh/sshd_config.new
+echo "ClientAliveInterval 300" >> /etc/ssh/sshd_config.new
+
+cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
+rm /etc/ssh/sshd_config.new
+
+cat /etc/ssh/sshd_config | grep -v ClientAliveCountMax  > /etc/ssh/sshd_config.new
+echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config.new
 
 cp /etc/ssh/sshd_config.new /etc/ssh/sshd_config
 rm /etc/ssh/sshd_config.new
@@ -513,6 +680,22 @@ rm /etc/ssh/sshd_config.new
 
 # 5.2.18 Ensure SSH access is limited 
 
+###Description###
+# There are several options available to limit which users and group can access the system via SSH.
+# It is recommended that at least one of the following options be leveraged: AllowUsers The AllowUsers variable 
+# gives the system administrator the option of allowing specific users to ssh into the system. The list consists 
+# of space separated user names. Numeric user IDs are not recognized with this variable. If a system administrator 
+# wants to restrict user access further by only allowing the allowed users to log in from a particular host, 
+# the entry can be specified in the form of user@host. AllowGroups The AllowGroups variable gives the system administrator
+# the option of allowing specific groups of users to ssh into the system. The list consists of space separated group names. 
+# Numeric group IDs are not recognized with this variable. DenyUsers The DenyUsers variable gives the system administrator 
+# the option of denying specific users to ssh into the system. The list consists of space separated user names. 
+# Numeric user IDs are not recognized with this variable. If a system administrator wants to restrict user access further 
+# by specifically denying a user's access from a particular host, the entry can be specified in the form of user@host. 
+# DenyGroups The DenyGroups variable gives the system administrator the option of denying specific groups of users to ssh 
+# into the system. The list consists of space separated group names. Numeric group IDs are not recognized with this variable. 
+# Rationale Restricting which users can remotely access the system via SSH will help ensure that 
+# only authorized users access the system.
 ###Recommendation###
 # Edit the /etc/ssh/sshd_config file to set one or more of the parameter as follows:
 # AllowUsers <userlist>AllowGroups <grouplist>DenyUsers <userlist>DenyGroups
@@ -529,6 +712,16 @@ rm /etc/ssh/sshd_config.new
 
 # 5.3.1 Ensure password creation requirements are configured
 
+###Description###
+# The pam_pwquality.so module checks the strength of passwords. It performs checks such as making sure a password 
+# is not a dictionary word, it is a certain length, contains a mix of characters (e.g. alphabet, numeric, other) and more. 
+# The following are definitions of the pam_pwquality .so options. try_first_pass - retrieve
+# the password from a previous stacked PAM module. If not available, then prompt the user for a password.retry=3 - 
+# Allow 3 tries before sending back a failure. The following options are set in the /etc/security/pwquality.conf file: 
+# minlen = 14 - password must be 14 characters or moredcredit = -1 - provide at least one digitucredit = -1 - provide at 
+# least one uppercase characterocredit = -1 - provide at least one special characterlcredit = -1 - provide at least one 
+# lowercase character The settings shown above are one possible policy. Alter these values to conform to your own organization's 
+# password policies. Rationale Strong passwords protect systems from being hacked through brute force methods.
 ###Recommendation###
 # Edit the /etc/pam.d/password-auth and /etc/pam.d/system-auth files to include the
 # appropriate options for pam_pwquality.so and to conform to site policy: password
@@ -923,7 +1116,7 @@ echo "max_log_file_action = keep_logs" >> /etc/audit/auditd.conf
 # as follows: TMOUT=600
 ######
 
-echo export TMOUT=600>>/etc/bashrc
-echo export TMOUT=600>>/etc/profile
+echo "TMOUT=600" >>/etc/bashrc
+echo "TMOUT=600" >>/etc/profile
 
 
